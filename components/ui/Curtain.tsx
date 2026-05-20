@@ -8,6 +8,7 @@ export default function Curtain() {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
 
+  // Decide whether the curtain should show, on mount only.
   useEffect(() => {
     if (prefersReducedMotion()) return;
     const force = new URLSearchParams(window.location.search).get("curtain") === "force";
@@ -16,15 +17,29 @@ export default function Curtain() {
 
     setVisible(true);
     document.documentElement.classList.add("lenis-stopped");
+  }, []);
 
+  // Run the animation only after the curtain is actually in the DOM (visible === true).
+  useEffect(() => {
+    if (!visible) return;
     const el = ref.current;
-    if (!el) return;
+
+    const cleanup = () => {
+      setVisible(false);
+      document.documentElement.classList.remove("lenis-stopped");
+      sessionStorage.setItem("codarti_seen", "1");
+    };
+
+    // Hard safety net: if anything in GSAP throws or the timeline never fires,
+    // we still restore scroll after 4s so the user is never trapped.
+    const safety = window.setTimeout(cleanup, 4000);
+
+    if (!el) return () => window.clearTimeout(safety);
 
     const tl = gsap.timeline({
       onComplete: () => {
-        setVisible(false);
-        document.documentElement.classList.remove("lenis-stopped");
-        sessionStorage.setItem("codarti_seen", "1");
+        window.clearTimeout(safety);
+        cleanup();
       },
     });
 
@@ -49,7 +64,12 @@ export default function Curtain() {
         },
         "-=0.1"
       );
-  }, []);
+
+    return () => {
+      window.clearTimeout(safety);
+      tl.kill();
+    };
+  }, [visible]);
 
   if (!visible) return null;
 
