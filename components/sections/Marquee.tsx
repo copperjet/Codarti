@@ -59,10 +59,10 @@ export default function Marquee() {
         {[...items, ...items].map((t, i) => (
           <span
             key={i}
-            className="font-serif text-[clamp(56px,9vw,140px)] leading-none px-8 flex items-center text-[var(--ink)]"
+            className="font-serif text-[clamp(48px,9vw,140px)] leading-none px-4 md:px-8 flex items-center text-[var(--ink)]"
           >
             <span>{t}</span>
-            <span className="mx-10 text-[var(--accent)]">·</span>
+            <span className="mx-5 md:mx-10 text-[var(--accent)]">·</span>
           </span>
         ))}
       </div>

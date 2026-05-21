@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { pinScene } from "@/lib/scroll";
 import { prefersReducedMotion } from "@/lib/motion";
+import { useIsMobile } from "@/lib/useIsMobile";
 import { testimonials } from "@/lib/content";
 import KineticBackdrop from "@/components/ui/KineticBackdrop";
 import TestimonialStack from "@/components/ui/TestimonialStack";
@@ -12,10 +14,12 @@ export default function TestimonialsPinned() {
   const [beat, setBeat] = useState(0);
   const [progress, setProgress] = useState(0);
   const reduced = prefersReducedMotion();
+  const isMobile = useIsMobile();
+  const stacked = reduced || isMobile;
 
   useEffect(() => {
     const el = sectionRef.current;
-    if (!el || reduced) return;
+    if (!el || stacked) return;
 
     const st = pinScene({
       trigger: el,
@@ -27,20 +31,34 @@ export default function TestimonialsPinned() {
       },
     });
     return () => { st?.kill(); };
-  }, [reduced]);
+  }, [stacked]);
 
-  if (reduced) {
+  if (stacked) {
     return (
       <section className="section-y bg-[var(--paper)]">
         <div className="container-x">
           <div className="eyebrow mb-12">(07) — In their words</div>
           {testimonials.map((t, i) => (
             <blockquote key={i} className="rule-b py-10">
-              <p className="font-serif text-[clamp(24px,3.5vw,48px)] leading-[1.2]">
+              <p className="font-serif text-[clamp(22px,5.5vw,40px)] leading-[1.2] text-[var(--ink)]">
                 &ldquo;{t.quote}&rdquo;
               </p>
-              <footer className="mt-6 text-sm text-[var(--ink-soft)]">
-                — {t.author}, {t.role}
+              <footer className="mt-6 flex items-center gap-3">
+                {t.image ? (
+                  <span className="polaroid-avatar avatar-img">
+                    <Image src={t.image} alt={t.author} width={44} height={44} />
+                  </span>
+                ) : (
+                  <span className="polaroid-avatar">
+                    {t.author.split(/\s+/).map((s) => s[0]).slice(0, 2).join("")}
+                  </span>
+                )}
+                <div>
+                  <div className="text-sm font-medium text-[var(--ink)]">{t.author}</div>
+                  <div className="text-[10px] uppercase tracking-widest text-[var(--ink-soft)]">
+                    {t.role}
+                  </div>
+                </div>
               </footer>
             </blockquote>
           ))}

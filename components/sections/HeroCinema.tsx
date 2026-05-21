@@ -4,9 +4,10 @@ import { useEffect, useRef, useState, MouseEvent } from "react";
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { Play } from "lucide-react";
 import { pinScene } from "@/lib/scroll";
-import { prefersReducedMotion } from "@/lib/motion";
+import { prefersReducedMotion, prefersHoverPointer } from "@/lib/motion";
+import { useIsMobile } from "@/lib/useIsMobile";
 import FloatingGlyph from "@/components/ui/FloatingGlyph";
-import HeroProps from "@/components/ui/HeroProps";
+import DotField from "@/components/ui/DotField";
 import SplitText from "@/components/ui/SplitText";
 import ReelModal from "@/components/ui/ReelModal";
 
@@ -32,9 +33,12 @@ const BEATS = [
 export default function HeroCinema() {
   const sectionRef = useRef<HTMLElement>(null);
   const [beat, setBeat] = useState(0);
-  const [progress, setProgress] = useState(0);
+  const [, setProgress] = useState(0);
   const [reelOpen, setReelOpen] = useState(false);
+  const [parallaxEnabled, setParallaxEnabled] = useState(false);
   const reduced = prefersReducedMotion();
+  const isMobile = useIsMobile();
+  const stacked = reduced || isMobile;
 
   // Mouse parallax for the prop stage
   const mx = useMotionValue(0);
@@ -46,18 +50,27 @@ export default function HeroCinema() {
   const glyphX = useTransform(smx, (v) => `${v * 8}px`);
   const glyphY = useTransform(smy, (v) => `${v * 6}px`);
 
+  useEffect(() => {
+    setParallaxEnabled(prefersHoverPointer());
+  }, []);
+
   const handleMove = (e: MouseEvent<HTMLElement>) => {
+    if (!parallaxEnabled) return;
     const el = sectionRef.current;
     if (!el) return;
     const r = el.getBoundingClientRect();
     mx.set(((e.clientX - (r.left + r.width / 2)) / r.width) * 2);
     my.set(((e.clientY - (r.top + r.height / 2)) / r.height) * 2);
   };
-  const handleLeave = () => { mx.set(0); my.set(0); };
+  const handleLeave = () => {
+    if (!parallaxEnabled) return;
+    mx.set(0);
+    my.set(0);
+  };
 
   useEffect(() => {
     const el = sectionRef.current;
-    if (!el || reduced) return;
+    if (!el || stacked) return;
 
     const st = pinScene({
       trigger: el,
@@ -69,22 +82,37 @@ export default function HeroCinema() {
       },
     });
     return () => { st?.kill(); };
-  }, [reduced]);
+  }, [stacked]);
 
-  if (reduced) {
+  // ── Stacked fallback (mobile + reduced-motion) ─────────────────────────
+  if (stacked) {
     return (
-      <section className="section-y">
-        <div className="container-x">
+      <section className="section-y pt-32 relative overflow-hidden">
+        <DotField density={16} accentRatio={0.08} className="opacity-90" />
+        <div className="container-x relative z-10">
           <div className="eyebrow mb-10">A software craft studio · Est. Lusaka</div>
           {BEATS.map((b, i) => (
             <div key={i} className="mb-20">
-              <h2 className="font-serif text-[clamp(48px,8vw,120px)] leading-[0.95] whitespace-pre-line text-[var(--ink)]">
+              <h2 className="font-serif text-[clamp(40px,11vw,96px)] leading-[0.95] whitespace-pre-line text-[var(--ink)]">
                 {b.headline}
               </h2>
-              <p className="text-[var(--ink-soft)] text-lg mt-6">{b.sub}</p>
+              <p className="text-[var(--ink-soft)] text-base mt-6">{b.sub}</p>
             </div>
           ))}
+          <button
+            type="button"
+            onClick={() => setReelOpen(true)}
+            data-cursor="play"
+            className="mt-4 group inline-flex items-center gap-3 text-[var(--ink-soft)] hover:text-[var(--ink)] transition-colors"
+            aria-label="Watch showreel"
+          >
+            <span className="w-11 h-11 rounded-full border border-[var(--ink)] flex items-center justify-center group-hover:bg-[var(--ink)] group-hover:text-[var(--bone)] transition-colors">
+              <Play className="w-4 h-4 translate-x-px" strokeWidth={1.5} fill="currentColor" />
+            </span>
+            <span className="eyebrow !text-current">Watch reel — 90s</span>
+          </button>
         </div>
+        <ReelModal open={reelOpen} onClose={() => setReelOpen(false)} src="/hero/reel.mp4" />
       </section>
     );
   }
@@ -98,24 +126,24 @@ export default function HeroCinema() {
       onMouseLeave={handleLeave}
       className="pin-scene min-h-[100svh] flex flex-col justify-between pt-32 pb-16 bg-[var(--bone)]"
     >
-      {/* Dot-grid backdrop */}
+      {/* Dot-grid backdrop (static, low opacity) */}
       <div className="dot-grid" aria-hidden />
 
-      {/* Multi-prop background scene (halos + stars + ring) — parallax with mouse */}
+      {/* Animated dot field — twinkling background with orange accent dots */}
       <motion.div
         className="absolute inset-0 pointer-events-none"
-        style={{ x: propX, y: propY }}
+        style={parallaxEnabled ? { x: propX, y: propY } : undefined}
         aria-hidden
       >
-        <HeroProps beat={beat} />
+        <DotField density={22} accentRatio={0.08} />
       </motion.div>
 
       {/* Floating C glyph — centered anchor with subtle parallax */}
       <motion.div
         className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none"
-        style={{ x: glyphX, y: glyphY }}
+        style={parallaxEnabled ? { x: glyphX, y: glyphY } : undefined}
       >
-        <FloatingGlyph beat={beat} progress={progress} />
+        <FloatingGlyph beat={beat} progress={0} />
       </motion.div>
 
       {/* Beat counter rail */}
@@ -133,7 +161,7 @@ export default function HeroCinema() {
               className="h-px transition-all duration-500"
               style={{
                 width: i === beat ? 40 : 12,
-                background: i === beat ? "var(--accent-2)" : "var(--ink)",
+                background: i === beat ? "var(--accent)" : "var(--ink)",
               }}
             />
           </div>
@@ -183,7 +211,6 @@ export default function HeroCinema() {
           </motion.p>
         </AnimatePresence>
 
-        {/* Watch reel CTA — opens centered video modal */}
         <motion.button
           type="button"
           onClick={() => setReelOpen(true)}

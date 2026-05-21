@@ -23,7 +23,7 @@ export default function Accordion({ q, a, index }: Props) {
       >
         <div className="flex items-start gap-6">
           {index && (
-            <span className="eyebrow tnum mt-2 hidden sm:block">{index}</span>
+            <span className="eyebrow tnum mt-2 shrink-0">{index}</span>
           )}
           <span className="font-serif text-2xl md:text-3xl text-[var(--ink)] leading-tight">
             {q}

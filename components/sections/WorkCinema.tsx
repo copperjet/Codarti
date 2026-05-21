@@ -97,7 +97,7 @@ export default function WorkCinema() {
       )}
 
       {/* Left beat rail */}
-      <div className="absolute left-6 md:left-12 top-1/2 -translate-y-1/2 flex flex-col gap-5 z-20">
+      <div className="absolute left-4 md:left-12 top-1/2 -translate-y-1/2 flex flex-col gap-5 z-20">
         {CINEMA_PROJECTS.map((proj, i) => (
           <div
             key={proj.slug}

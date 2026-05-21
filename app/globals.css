@@ -2,13 +2,13 @@
 
 @theme inline {
   --color-bone: #FAFAF5;
-  --color-paper: #F0EBDB;
+  --color-paper: #F4EFE3;
   --color-ink: #0F0E14;
   --color-ink-soft: #3D3A45;
-  --color-rule: #DCD5C2;
-  --color-accent: #C8FF3D;
-  --color-accent-2: #6B4FE8;
-  --color-accent-3: #F4C9D4;
+  --color-rule: #E5DDC9;
+  --color-accent: #FF5A1F;
+  --color-accent-2: #1F1B2E;
+  --color-accent-3: #FFB89A;
   --color-backdrop: #1F1B2E;
 
   --font-serif: var(--font-instrument), Georgia, serif;
@@ -17,13 +17,13 @@
 
 :root {
   --bone: #FAFAF5;
-  --paper: #F0EBDB;
+  --paper: #F4EFE3;
   --ink: #0F0E14;
   --ink-soft: #3D3A45;
-  --rule: #DCD5C2;
-  --accent: #C8FF3D;
-  --accent-2: #6B4FE8;
-  --accent-3: #F4C9D4;
+  --rule: #E5DDC9;
+  --accent: #FF5A1F;
+  --accent-2: #1F1B2E;
+  --accent-3: #FFB89A;
   --backdrop: #1F1B2E;
 
   --gutter: clamp(20px, 4vw, 48px);
@@ -35,6 +35,10 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+html, body {
+  overflow-x: hidden;
 }
 
 html {
@@ -52,7 +56,6 @@ body {
   font-size: 16px;
   line-height: 1.55;
   font-weight: 400;
-  overflow-x: hidden;
   font-feature-settings: "ss01", "cv11";
 }
 
@@ -101,12 +104,12 @@ body {
 
 /* Focus rings — visible even when cursor is hidden */
 :focus-visible {
-  outline: 2px solid var(--accent-2);
+  outline: 2px solid var(--accent);
   outline-offset: 3px;
   border-radius: 2px;
 }
 
-/* Scene utilities — soft 64px bleed at top so adjacent sections blend */
+/* Scene utilities */
 .scene-bone { background: var(--bone); }
 .scene-paper { background: var(--paper); }
 .scene-ink { background: var(--ink); color: var(--bone); }
@@ -229,13 +232,13 @@ html.lenis, html.lenis body { height: auto; }
 }
 @media (max-width: 767px) {
   .kinetic-backdrop-text {
-    font-size: clamp(96px, 28vw, 180px);
-    letter-spacing: -0.03em;
+    font-size: clamp(72px, 22vw, 140px);
+    letter-spacing: -0.02em;
   }
 }
-.kinetic-backdrop-text.lime { color: var(--accent); opacity: 0.42; }
+.kinetic-backdrop-text.lime { color: var(--accent); opacity: 0.32; }
 .kinetic-backdrop-text.purple { color: var(--accent-2); opacity: 0.16; }
-.kinetic-backdrop-text.pink { color: var(--accent-3); opacity: 0.55; }
+.kinetic-backdrop-text.pink { color: var(--accent-3); opacity: 0.50; }
 
 /* Scroll progress bar */
 .scroll-progress {
@@ -347,9 +350,11 @@ html.lenis, html.lenis body { height: auto; }
   will-change: transform;
   z-index: 1;
   opacity: 0.65;
+  width: clamp(220px, 40vw, 460px);
+  height: clamp(220px, 40vw, 460px);
 }
 
-/* Hero prop layers */
+/* Hero prop layers (legacy — kept for reference if HeroProps reintroduced) */
 .hero-prop {
   position: absolute;
   pointer-events: none;
@@ -365,7 +370,7 @@ html.lenis, html.lenis body { height: auto; }
   z-index: 0;
 }
 
-/* Dot-grid backdrop */
+/* Dot-grid backdrop (static) */
 .dot-grid {
   position: absolute;
   inset: 0;
@@ -380,6 +385,44 @@ html.lenis, html.lenis body { height: auto; }
 .dot-grid.dark {
   background-image: radial-gradient(circle, var(--bone) 1px, transparent 1px);
   opacity: 0.08;
+}
+
+/* Animated dot field — twinkling background */
+.dot-field {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  mask-image: radial-gradient(ellipse at center, black 35%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 35%, transparent 80%);
+}
+.dot-field-dot {
+  position: absolute;
+  border-radius: 999px;
+  opacity: 0;
+  transform: translate3d(-50%, -50%, 0) scale(0.6);
+  animation: dot-twinkle 3s ease-in-out infinite;
+  will-change: opacity, transform;
+}
+.dot-field-dot.is-accent {
+  animation: dot-twinkle-accent 3s ease-in-out infinite;
+  box-shadow: 0 0 8px currentColor;
+}
+@keyframes dot-twinkle {
+  0%, 100% { opacity: 0; transform: translate3d(-50%, -50%, 0) scale(0.6); }
+  50%      { opacity: 0.55; transform: translate3d(-50%, -50%, 0) scale(1); }
+}
+@keyframes dot-twinkle-accent {
+  0%, 100% { opacity: 0;    transform: translate3d(-50%, -50%, 0) scale(0.6); }
+  50%      { opacity: 0.95; transform: translate3d(-50%, -50%, 0) scale(1.5); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dot-field-dot,
+  .dot-field-dot.is-accent {
+    animation: none;
+    opacity: 0.18;
+    transform: translate3d(-50%, -50%, 0) scale(1);
+  }
 }
 
 /* Tilted card wrapper */
@@ -402,15 +445,17 @@ html.lenis, html.lenis body { height: auto; }
 /* Hide scrollbar visual but keep functional (Lenis handles smoothness) */
 ::-webkit-scrollbar { width: 0; background: transparent; }
 
-/* Polaroid quote card */
+/* Polaroid quote card — cream with orange accent stripe */
 .polaroid {
-  background: var(--accent);
+  background: var(--bone);
   color: var(--ink);
   padding: 32px 28px 24px;
   border-radius: 4px;
+  border: 1px solid var(--rule);
+  border-top: 4px solid var(--accent);
   box-shadow:
-    0 18px 40px -12px rgba(15, 14, 20, 0.28),
-    0 6px 16px -6px rgba(15, 14, 20, 0.14);
+    0 18px 40px -12px rgba(15, 14, 20, 0.20),
+    0 6px 16px -6px rgba(15, 14, 20, 0.10);
   position: relative;
   display: flex;
   flex-direction: column;
@@ -511,7 +556,7 @@ html.lenis, html.lenis body { height: auto; }
 /* CTA idle pulse */
 @keyframes cta-pulse {
   0%, 100% { opacity: 0.22; transform: scale(0.96); }
-  50% { opacity: 0.42; transform: scale(1.04); }
+  50%      { opacity: 0.42; transform: scale(1.04); }
 }
 .cta-idle-pulse {
   position: absolute;
@@ -522,6 +567,33 @@ html.lenis, html.lenis body { height: auto; }
   z-index: -1;
   animation: cta-pulse 3.6s ease-in-out infinite;
   pointer-events: none;
+}
+
+/* Mobile nav drawer */
+.mobile-drawer {
+  position: fixed;
+  inset: 0;
+  background: var(--ink);
+  z-index: 70;
+  display: flex;
+  flex-direction: column;
+  padding: 24px var(--gutter);
+}
+.mobile-drawer-link {
+  font-family: var(--font-serif);
+  font-size: clamp(36px, 8vw, 72px);
+  line-height: 1.1;
+  color: var(--bone);
+  letter-spacing: -0.02em;
+}
+.mobile-drawer-link:hover { color: var(--accent); }
+
+/* Touch tap-target enforcement inside main content */
+@media (max-width: 767px) {
+  .container-x a,
+  .container-x button {
+    min-height: 36px;
+  }
 }
 
 /* Cursor on touch — do not hide native cursor */

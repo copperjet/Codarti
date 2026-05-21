@@ -1,7 +1,8 @@
 "use client";
 
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { useRef, MouseEvent } from "react";
+import { useEffect, useRef, useState, MouseEvent } from "react";
+import { prefersHoverPointer } from "@/lib/motion";
 
 type Props = {
   children: React.ReactNode;
@@ -21,6 +22,7 @@ export default function MagneticLink({
   as = "a",
 }: Props) {
   const ref = useRef<HTMLAnchorElement | HTMLButtonElement>(null);
+  const [hover, setHover] = useState(false);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const sx = useSpring(x, { stiffness: 200, damping: 18, mass: 0.4 });
@@ -28,7 +30,12 @@ export default function MagneticLink({
   const tx = useTransform(sx, (v) => `${v}px`);
   const ty = useTransform(sy, (v) => `${v}px`);
 
+  useEffect(() => {
+    setHover(prefersHoverPointer());
+  }, []);
+
   const handleMove = (e: MouseEvent) => {
+    if (!hover) return;
     const el = ref.current;
     if (!el) return;
     const r = el.getBoundingClientRect();
@@ -39,9 +46,12 @@ export default function MagneticLink({
   };
 
   const handleLeave = () => {
+    if (!hover) return;
     x.set(0);
     y.set(0);
   };
+
+  const motionStyle = hover ? { x: tx, y: ty } : undefined;
 
   if (as === "button") {
     return (
@@ -50,7 +60,7 @@ export default function MagneticLink({
         onClick={onClick}
         onMouseMove={handleMove}
         onMouseLeave={handleLeave}
-        style={{ x: tx, y: ty }}
+        style={motionStyle}
         className={className}
       >
         {children}
@@ -64,7 +74,7 @@ export default function MagneticLink({
       href={href}
       onMouseMove={handleMove}
       onMouseLeave={handleLeave}
-      style={{ x: tx, y: ty }}
+      style={motionStyle}
       className={className}
     >
       {children}

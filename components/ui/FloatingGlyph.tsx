@@ -36,9 +36,8 @@ export default function FloatingGlyph({ beat }: Props) {
     <svg
       ref={ref}
       className="floating-glyph"
-      width="460"
-      height="460"
       viewBox="0 0 340 340"
+      preserveAspectRatio="xMidYMid meet"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden

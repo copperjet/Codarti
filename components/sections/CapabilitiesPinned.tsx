@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { pinScene } from "@/lib/scroll";
 import { prefersReducedMotion } from "@/lib/motion";
+import { useIsMobile } from "@/lib/useIsMobile";
 import { capabilities } from "@/lib/content";
 import KineticBackdrop from "@/components/ui/KineticBackdrop";
 
@@ -12,10 +13,12 @@ export default function CapabilitiesPinned() {
   const [beat, setBeat] = useState(0);
   const [progress, setProgress] = useState(0);
   const reduced = prefersReducedMotion();
+  const isMobile = useIsMobile();
+  const stacked = reduced || isMobile;
 
   useEffect(() => {
     const el = sectionRef.current;
-    if (!el || reduced) return;
+    if (!el || stacked) return;
 
     const st = pinScene({
       trigger: el,
@@ -27,9 +30,9 @@ export default function CapabilitiesPinned() {
       },
     });
     return () => { st?.kill(); };
-  }, [reduced]);
+  }, [stacked]);
 
-  if (reduced) {
+  if (stacked) {
     return (
       <section id="capabilities" className="section-y bg-[var(--paper)]">
         <div className="container-x">
