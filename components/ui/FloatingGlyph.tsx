@@ -15,22 +15,33 @@ const beats = [
   { x: "0vw", y: "-2vh", rotate: 0, scale: 1.6 },
 ];
 
-export default function FloatingGlyph({ beat }: Props) {
+const parseVw = (s: string) => parseFloat(s);
+const fmtVw = (n: number, unit: string) => `${n}${unit}`;
+
+export default function FloatingGlyph({ progress }: Props) {
   const ref = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const b = beats[Math.min(beat, beats.length - 1)];
+    const segments = beats.length - 1;
+    const t = Math.min(1, Math.max(0, progress)) * segments;
+    const i = Math.min(segments - 1, Math.floor(t));
+    const f = t - i;
+    const a = beats[i];
+    const b = beats[i + 1];
+    const ax = parseVw(a.x), bx = parseVw(b.x);
+    const ay = parseVw(a.y), by = parseVw(b.y);
     gsap.to(el, {
-      x: b.x,
-      y: b.y,
-      rotate: b.rotate,
-      scale: b.scale,
-      duration: 1.6,
-      ease: "back.out(1.5)",
+      x: fmtVw(ax + (bx - ax) * f, "vw"),
+      y: fmtVw(ay + (by - ay) * f, "vh"),
+      rotate: a.rotate + (b.rotate - a.rotate) * f,
+      scale: a.scale + (b.scale - a.scale) * f,
+      duration: 0.4,
+      ease: "power2.out",
+      overwrite: "auto",
     });
-  }, [beat]);
+  }, [progress]);
 
   return (
     <svg

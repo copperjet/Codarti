@@ -132,7 +132,7 @@ export default function Contact() {
                     disabled={isSubmitting}
                     whileHover={{ y: -2 }}
                     whileTap={{ scale: 0.98 }}
-                    className="group inline-flex items-center gap-3 px-7 py-4 rounded-full bg-[var(--bone)] text-[var(--ink)] text-sm font-medium hover:bg-[var(--accent)] hover:text-[var(--ink)] transition-colors disabled:opacity-60 disabled:cursor-wait"
+                    className="group inline-flex items-center gap-3 px-8 py-4 rounded-full bg-[var(--bone)] text-[var(--ink)] text-sm font-medium hover:bg-[var(--accent)] hover:text-[var(--ink)] transition-colors disabled:opacity-60 disabled:cursor-wait"
                   >
                     {isSubmitting
                       ? "Sending..."

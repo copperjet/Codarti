@@ -19,7 +19,7 @@ export default function Button({
   withArrow = true,
 }: Props) {
   const base =
-    "group inline-flex items-center gap-3 px-6 py-3.5 rounded-full text-sm tracking-wide transition-all duration-300";
+    "group inline-flex items-center gap-3 px-8 py-4 rounded-full text-sm tracking-wide transition-all duration-300";
   const styles =
     variant === "primary"
       ? "bg-[var(--accent)] text-[var(--bone)] font-medium shadow-[0_4px_14px_-2px_rgba(255,90,31,0.45)] hover:bg-[var(--ink)] hover:text-[var(--bone)] hover:shadow-[0_6px_18px_-2px_rgba(15,14,20,0.4)]"

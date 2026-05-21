@@ -5,7 +5,6 @@ import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from
 import { Play } from "lucide-react";
 import { pinScene } from "@/lib/scroll";
 import { prefersReducedMotion, prefersHoverPointer } from "@/lib/motion";
-import { useIsMobile } from "@/lib/useIsMobile";
 import FloatingGlyph from "@/components/ui/FloatingGlyph";
 import DotField from "@/components/ui/DotField";
 import SplitText from "@/components/ui/SplitText";
@@ -33,12 +32,11 @@ const BEATS = [
 export default function HeroCinema() {
   const sectionRef = useRef<HTMLElement>(null);
   const [beat, setBeat] = useState(0);
-  const [, setProgress] = useState(0);
+  const [progress, setProgress] = useState(0);
   const [reelOpen, setReelOpen] = useState(false);
   const [parallaxEnabled, setParallaxEnabled] = useState(false);
   const reduced = prefersReducedMotion();
-  const isMobile = useIsMobile();
-  const stacked = reduced || isMobile;
+  const stacked = reduced;
 
   // Mouse parallax for the prop stage
   const mx = useMotionValue(0);
@@ -143,7 +141,7 @@ export default function HeroCinema() {
         className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none"
         style={parallaxEnabled ? { x: glyphX, y: glyphY } : undefined}
       >
-        <FloatingGlyph beat={beat} progress={0} />
+        <FloatingGlyph beat={beat} progress={progress} />
       </motion.div>
 
       {/* Beat counter rail */}

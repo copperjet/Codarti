@@ -8,7 +8,6 @@ import Button from "@/components/ui/Button";
 const links = [
   { label: "Work", href: "#work" },
   { label: "Studio", href: "#studio" },
-  { label: "Process", href: "#process" },
   { label: "Contact", href: "#contact" },
 ];
 
@@ -177,7 +176,7 @@ export default function Nav() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.5 }}
-              className="group inline-flex items-center justify-between gap-3 px-6 py-4 rounded-full bg-[var(--accent)] text-[var(--bone)] text-sm font-medium"
+              className="group inline-flex items-center justify-between gap-3 px-8 py-4 rounded-full bg-[var(--accent)] text-[var(--bone)] text-sm font-medium"
             >
               <span>Start a project</span>
               <ArrowUpRight className="w-4 h-4" strokeWidth={1.5} />

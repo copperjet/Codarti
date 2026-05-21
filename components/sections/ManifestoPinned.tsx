@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { pinScene } from "@/lib/scroll";
 import { prefersReducedMotion } from "@/lib/motion";
-import { useIsMobile } from "@/lib/useIsMobile";
 import KineticBackdrop from "@/components/ui/KineticBackdrop";
 
 const BEATS = [
@@ -20,8 +19,7 @@ export default function ManifestoPinned() {
   const [beat, setBeat] = useState(0);
   const [progress, setProgress] = useState(0);
   const reduced = prefersReducedMotion();
-  const isMobile = useIsMobile();
-  const stacked = reduced || isMobile;
+  const stacked = reduced;
 
   useEffect(() => {
     const el = sectionRef.current;

@@ -19,14 +19,17 @@ export function pinScene({
   mobileBreakpoint = 768,
 }: PinSceneOptions): ScrollTrigger | null {
   if (prefersReducedMotion()) return null;
-  if (typeof window !== "undefined" && window.innerWidth < mobileBreakpoint) return null;
+
+  const isMobile =
+    typeof window !== "undefined" && window.innerWidth < mobileBreakpoint;
 
   const st = ScrollTrigger.create({
     trigger,
     start: "top top",
-    end: () => `+=${beats * window.innerHeight * heightMultiplier}`,
+    end: () =>
+      `+=${beats * window.innerHeight * heightMultiplier * (isMobile ? 0.7 : 1)}`,
     pin: true,
-    scrub: 1.2,
+    scrub: isMobile ? 0.8 : 1.2,
     anticipatePin: 1,
     invalidateOnRefresh: true,
     onUpdate: (self) => {

@@ -18,7 +18,7 @@ type Props = {
  * drives every card's position simultaneously, so multiple cards are
  * visible at different stages along the path at any instant.
  */
-export default function ScreenshotStack({ screenshots, swatch, alt, projectKey, progress }: Props) {
+export default function ScreenshotStack({ screenshots, swatch, alt, progress }: Props) {
   const N = Math.max(1, screenshots.length);
   const safeProgress = Number.isFinite(progress) ? Math.max(0, Math.min(1, progress)) : 0;
 
@@ -50,7 +50,7 @@ export default function ScreenshotStack({ screenshots, swatch, alt, projectKey, 
 
         return (
           <motion.div
-            key={`${projectKey}-card-${i}`}
+            key={`card-${i}`}
             style={{
               position: "absolute",
               left: "50%",
@@ -84,6 +84,8 @@ export default function ScreenshotStack({ screenshots, swatch, alt, projectKey, 
                 sizes="260px"
                 className="object-cover"
                 draggable={false}
+                priority={i === 0}
+                quality={85}
               />
             </div>
           </motion.div>

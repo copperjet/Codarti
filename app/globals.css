@@ -31,11 +31,8 @@
   --max-w: 1400px;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* Universal reset moved to Tailwind's @layer base preflight.
+   Adding padding/margin here unlayered breaks Tailwind utility cascade. */
 
 html, body {
   overflow-x: hidden;
@@ -237,7 +234,7 @@ html.lenis, html.lenis body { height: auto; }
   }
 }
 .kinetic-backdrop-text.lime { color: var(--accent); opacity: 0.32; }
-.kinetic-backdrop-text.purple { color: var(--accent-2); opacity: 0.16; }
+.kinetic-backdrop-text.purple { color: var(--accent); opacity: 0.28; }
 .kinetic-backdrop-text.pink { color: var(--accent-3); opacity: 0.50; }
 
 /* Scroll progress bar */

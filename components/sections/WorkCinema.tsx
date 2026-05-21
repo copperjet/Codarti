@@ -31,6 +31,16 @@ export default function WorkCinema() {
   };
 
   useEffect(() => {
+    // Preload all project screenshots so no project transition shows a blank decode frame.
+    CINEMA_PROJECTS.forEach((proj) => {
+      proj.screenshots?.forEach((src) => {
+        const img = new window.Image();
+        img.src = src;
+      });
+    });
+  }, []);
+
+  useEffect(() => {
     const el = sectionRef.current;
     if (!el || reduced) return;
 
