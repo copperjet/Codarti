@@ -9,9 +9,10 @@ type Props = {
   project: Project;
   className?: string;
   tilt?: number;
+  priority?: boolean;
 };
 
-export default function WorkTile({ project, className = "", tilt = 0 }: Props) {
+export default function WorkTile({ project, className = "", tilt = 0, priority = false }: Props) {
   const ref = useRef<HTMLAnchorElement>(null);
 
   const onMove = (e: MouseEvent<HTMLAnchorElement>) => {
@@ -33,17 +34,19 @@ export default function WorkTile({ project, className = "", tilt = 0 }: Props) {
       data-cursor="view"
       style={{ transform: `rotate(${tilt}deg)` }}
     >
-      <div className="work-tile-inner relative overflow-hidden" style={{ minHeight: "100%" }}>
-        {/* Cover image — swatch fallback */}
+      <div className="work-tile-inner relative overflow-hidden" style={{ height: "100%", minHeight: 240 }}>
+        {/* Cover image fills the entire inner div */}
         <Media
           src={project.image}
           swatch={project.swatch}
           alt={project.name}
-          className="absolute inset-0"
+          className="h-full w-full"
+          priority={priority}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
 
-        {/* Decorative blobs above imagery */}
+        {/* Overlays positioned relative to work-tile-inner */}
+        {/* Decorative blobs */}
         <div
           className="absolute -top-10 -right-10 w-40 h-40 rounded-full pointer-events-none"
           style={{ background: "var(--accent)", opacity: 0.18, filter: "blur(28px)" }}
@@ -55,14 +58,14 @@ export default function WorkTile({ project, className = "", tilt = 0 }: Props) {
           aria-hidden
         />
 
-        {/* Bottom scrim so the name stays legible */}
+        {/* Bottom scrim */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{ background: "linear-gradient(to top, rgba(15,14,20,0.6) 0%, transparent 55%)" }}
           aria-hidden
         />
 
-        <div className="relative h-full flex items-end p-6">
+        <div className="absolute inset-0 flex items-end p-6">
           <span className="font-serif text-[clamp(24px,3vw,52px)] text-[var(--bone)] leading-none tracking-[-0.02em]">
             {project.name}
           </span>

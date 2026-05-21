@@ -13,24 +13,13 @@ export type Project = {
   image?: string;
   video?: string;
   poster?: string;
+  // 3 screenshot paths back→front z-order, used by ScreenshotStack
+  screenshots?: string[];
 };
 
 export const projects: Project[] = [
   {
     index: "01",
-    slug: "igaprep",
-    name: "iGaPrep",
-    url: "igaprep.com",
-    description:
-      "Adaptive exam preparation platform serving students across Sub-Saharan Africa.",
-    outcome: "10× faster mock cycles, 70k+ active learners.",
-    tags: ["Product", "Engineering", "Design"],
-    year: "2024",
-    swatch: "#1F2A3A",
-    image: "/work/igaprep/cover.webp",
-  },
-  {
-    index: "02",
     slug: "firstinqueue",
     name: "FirstInQueue",
     url: "firstinqueue.com",
@@ -40,23 +29,16 @@ export const projects: Project[] = [
     tags: ["Engineering", "Operations"],
     year: "2024",
     swatch: "#4A463D",
-    image: "/work/firstinqueue/cover.webp",
+    image: "/work/firstinqueue/FiQ-1.jpeg",
+    screenshots: [
+      "/work/firstinqueue/FiQ-2.jpeg",
+      "/work/firstinqueue/FiQ-4.jpeg",
+      "/work/firstinqueue/FiQ-6.jpeg",
+      "/work/firstinqueue/FiQ-1.jpeg",
+    ],
   },
   {
-    index: "03",
-    slug: "predictioncube",
-    name: "PredictionCube",
-    url: "predictioncube.com",
-    description:
-      "Predictive analytics engine for risk-pricing and forecasting workloads.",
-    outcome: "Models retrained 20× faster than baseline.",
-    tags: ["Engineering", "Data"],
-    year: "2025",
-    swatch: "#B8543A",
-    image: "/work/predictioncube/cover.webp",
-  },
-  {
-    index: "04",
+    index: "02",
     slug: "escholr",
     name: "eScholr",
     url: "escholr.com",
@@ -66,7 +48,82 @@ export const projects: Project[] = [
     tags: ["Product", "Engineering", "Design", "Strategy"],
     year: "2026",
     swatch: "#16140F",
-    image: "/work/escholr/cover.webp",
+    image: "/work/escholr/Eschor-1.jpeg",
+    screenshots: [
+      "/work/escholr/Eschor-3.jpeg",
+      "/work/escholr/Eschor-5.jpeg",
+      "/work/escholr/Eschor-7.jpeg",
+      "/work/escholr/Eschor-1.jpeg",
+    ],
+  },
+  {
+    index: "03",
+    slug: "igaprep",
+    name: "iGaPrep",
+    url: "igaprep.com",
+    description:
+      "Adaptive exam preparation platform serving students across Sub-Saharan Africa.",
+    outcome: "10× faster mock cycles, 70k+ active learners.",
+    tags: ["Product", "Engineering", "Design"],
+    year: "2024",
+    swatch: "#1F2A3A",
+    image: "/work/igaprep/igaprep-1.jpeg",
+    screenshots: [
+      "/work/igaprep/igaprep-2.jpeg",
+      "/work/igaprep/igaprep-4.jpeg",
+      "/work/igaprep/igaprep-6.jpeg",
+      "/work/igaprep/igaprep-1.jpeg",
+    ],
+  },
+  {
+    index: "04",
+    slug: "predictioncube",
+    name: "PredictionCube",
+    url: "predictioncube.com",
+    description:
+      "Predictive analytics engine for risk-pricing and forecasting workloads.",
+    outcome: "Models retrained 20× faster than baseline.",
+    tags: ["Engineering", "Data"],
+    year: "2025",
+    swatch: "#B8543A",
+    image: "/work/predictioncube/predictioncube-1.jpeg",
+    screenshots: [
+      "/work/predictioncube/predictioncube-2.jpeg",
+      "/work/predictioncube/predictioncube-3.jpeg",
+      "/work/predictioncube/predictioncube-4.jpeg",
+      "/work/predictioncube/predictioncube-1.jpeg",
+    ],
+  },
+  {
+    index: "05",
+    slug: "pezabondi",
+    name: "Peza Bondi",
+    url: "pezabondi.app",
+    description: "Rental Property Management System.",
+    outcome: "Streamlined property ops end-to-end.",
+    tags: ["Product", "Engineering", "Design"],
+    year: "2025",
+    swatch: "#2C4A3E",
+    image: "/work/pezabondi/pezabondi-1.jpeg",
+    screenshots: [
+      "/work/pezabondi/pezabondi-2.jpeg",
+      "/work/pezabondi/pezabondi-3.jpeg",
+      "/work/pezabondi/pezabondi-4.jpeg",
+      "/work/pezabondi/pezabondi-1.jpeg",
+    ],
+  },
+  {
+    index: "06",
+    slug: "mondepay",
+    name: "Monde Pay",
+    url: "mondepay.com",
+    description: "Mobile payment solution for Android and iOS.",
+    outcome: "Cross-platform payments shipped on a single codebase.",
+    tags: ["Product", "Engineering", "Mobile"],
+    year: "2025",
+    swatch: "#1B3D2F",
+    image: "/work/mondepay/mondepay-1.jpeg",
+    screenshots: ["/work/mondepay/mondepay-1.jpeg"],
   },
 ];
 
@@ -135,33 +192,43 @@ export type Testimonial = {
 export const testimonials: Testimonial[] = [
   {
     quote:
-      "Codarti shipped what two prior teams couldn't. The bar they hold is the bar we now hold ourselves to.",
-    author: "Founder",
-    role: "iGaPrep",
-    authorSlug: "igaprep-founder",
+      "Codarti rebuilt our queue engine end-to-end. Wait times dropped, complaints stopped. The system runs itself.",
+    author: "Mundia Songiso",
+    role: "COO, FirstInQueue",
+    authorSlug: "firstinqueue-mundia",
     hashtag: "#Shipped",
-    location: "Lusaka, ZM",
-    image: "/testimonials/igaprep-founder.webp",
+    location: "Lusaka",
+    image: "/work/Clients/mundia.jpg",
   },
   {
     quote:
-      "Quiet, fast, exact. Their work feels like it was always there.",
-    author: "Operations Lead",
-    role: "FirstInQueue",
-    authorSlug: "firstinqueue-ops",
-    hashtag: "#Quiet",
-    location: "Nairobi, KE",
-    image: "/testimonials/firstinqueue-ops.webp",
-  },
-  {
-    quote:
-      "They treated our codebase like their own. That's rare.",
-    author: "CTO",
-    role: "PredictionCube",
-    authorSlug: "predictioncube-cto",
+      "We shipped Peza Bondi in months, not years. Every release lands clean. They build like they own the product.",
+    author: "David Mwikisa",
+    role: "CEO, Peza Bondi",
+    authorSlug: "pezabondi-ceo",
     hashtag: "#Considered",
+    location: "Lusaka",
+    image: "/work/Clients/David.jpg",
+  },
+  {
+    quote:
+      "The forecasting models retrain in hours now. Risk reports that used to take a week run before lunch.",
+    author: "Sydney Peunja",
+    role: "CFO, PredictionCube",
+    authorSlug: "predictioncube-cfo",
+    hashtag: "#Sharp",
     location: "Cape Town, ZA",
-    image: "/testimonials/predictioncube-cto.webp",
+    image: "/work/Clients/sydney.jpg",
+  },
+  {
+    quote:
+      "iGaPrep scaled past seventy thousand learners without a hiccup. The architecture they handed us still holds.",
+    author: "Nathan Mwambazi",
+    role: "CTO, iGaPrep",
+    authorSlug: "igaprep-cto",
+    hashtag: "#Built",
+    location: "Lusaka",
+    image: "/work/Clients/nathan.jpg",
   },
 ];
 
@@ -170,6 +237,8 @@ export const clientNames = [
   "FirstInQueue",
   "PredictionCube",
   "eScholr",
+  "Monde Pay",
+  "Peza Bondi",
   "Ministry of Education ZM",
   "Cassava Health",
   "Atlas Capital",

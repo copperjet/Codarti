@@ -23,19 +23,19 @@ export default function WorkBento() {
 
         <div className="bento-grid" style={{ gridAutoRows: "240px" }}>
           {/* Row 1: wide + narrow */}
-          <div className="col-span-12 md:col-span-8 row-span-2" style={{ gridRow: "span 2" }}>
-            <WorkTile project={projects[0]} className="h-full" tilt={-1.5} />
+          <div className="col-span-12 md:col-span-8" style={{ gridRow: "span 2", height: 480 }}>
+            <WorkTile project={projects[0]} className="h-full" tilt={-1.5} priority />
           </div>
-          <div className="col-span-12 md:col-span-4">
+          <div className="col-span-12 md:col-span-4" style={{ height: 240 }}>
             <WorkTile project={projects[1]} className="h-full" tilt={1.5} />
           </div>
-          {/* Row 2: narrow + wide */}
-          <div className="col-span-12 md:col-span-4">
+          {/* Row 2 */}
+          <div className="col-span-12 md:col-span-4" style={{ height: 240 }}>
             <WorkTile project={projects[2]} className="h-full" tilt={-1} />
           </div>
-          {/* Row 3: three equal */}
+          {/* Row 3: remaining projects */}
           {projects.slice(3).map((p, i) => (
-            <div key={p.name} className="col-span-12 md:col-span-4">
+            <div key={p.name} className="col-span-12 md:col-span-4" style={{ height: 240 }}>
               <WorkTile project={p} className="h-full" tilt={i % 2 === 0 ? 1.2 : -1.2} />
             </div>
           ))}

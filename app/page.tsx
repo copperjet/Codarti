@@ -3,7 +3,6 @@ import HeroCinema from "@/components/sections/HeroCinema";
 import Marquee from "@/components/sections/Marquee";
 import ManifestoPinned from "@/components/sections/ManifestoPinned";
 import WorkCinema from "@/components/sections/WorkCinema";
-import WorkBento from "@/components/sections/WorkBento";
 import CapabilitiesPinned from "@/components/sections/CapabilitiesPinned";
 import Process from "@/components/sections/Process";
 import Studio from "@/components/sections/Studio";
@@ -22,7 +21,6 @@ export default function Home() {
       <ManifestoPinned />
       <section id="work">
         <WorkCinema />
-        <WorkBento />
       </section>
       <CapabilitiesPinned />
       <Process />

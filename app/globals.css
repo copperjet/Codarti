@@ -480,6 +480,19 @@ html.lenis, html.lenis body { height: auto; }
   overflow: hidden;
 }
 
+/* Photo-filled avatar variant — clip image to circle */
+.polaroid-avatar.avatar-img,
+.video-card-meta-avatar.avatar-img {
+  padding: 0;
+  background: var(--rule);
+}
+.polaroid-avatar.avatar-img img,
+.video-card-meta-avatar.avatar-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 /* Capability monogram */
 .cap-glyph {
   display: inline-flex;

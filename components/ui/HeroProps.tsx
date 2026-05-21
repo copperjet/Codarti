@@ -20,18 +20,6 @@ const propBeats = {
     { x: -220, y: -60, scale: 1.1, opacity: 0.5 },
     { x: 0, y: 30, scale: 1.3, opacity: 0.45 },
   ],
-  starA: [
-    { x: 0, y: 0, rotate: 12, scale: 1 },
-    { x: -120, y: 80, rotate: -24, scale: 1.1 },
-    { x: 140, y: -90, rotate: 36, scale: 0.9 },
-    { x: 0, y: -120, rotate: 60, scale: 1.3 },
-  ],
-  starB: [
-    { x: 0, y: 0, rotate: -8, scale: 0.9 },
-    { x: 100, y: -60, rotate: 24, scale: 1.05 },
-    { x: -90, y: 100, rotate: -36, scale: 1.15 },
-    { x: 60, y: 100, rotate: 48, scale: 1 },
-  ],
   ring: [
     { x: 0, y: 0, rotate: 0, scale: 1 },
     { x: -60, y: 0, rotate: -90, scale: 0.85 },
@@ -65,14 +53,10 @@ function useBeatTween(
 export default function HeroProps({ beat }: Props) {
   const haloLimeRef = useRef<HTMLDivElement>(null);
   const haloPurpleRef = useRef<HTMLDivElement>(null);
-  const starARef = useRef<SVGSVGElement>(null);
-  const starBRef = useRef<SVGSVGElement>(null);
   const ringRef = useRef<SVGSVGElement>(null);
 
   useBeatTween(haloLimeRef, propBeats.haloLime, beat);
   useBeatTween(haloPurpleRef, propBeats.haloPurple, beat);
-  useBeatTween(starARef, propBeats.starA, beat);
-  useBeatTween(starBRef, propBeats.starB, beat);
   useBeatTween(ringRef, propBeats.ring, beat);
 
   return (
@@ -101,37 +85,6 @@ export default function HeroProps({ beat }: Props) {
           background: "var(--accent-2)",
         }}
       />
-
-      {/* Star A — upper right */}
-      <svg
-        ref={starARef}
-        className="hero-prop"
-        style={{ right: "14%", top: "18%", width: 56, height: 56, zIndex: 2 }}
-        viewBox="0 0 56 56"
-        fill="none"
-        aria-hidden
-      >
-        <path
-          d="M28 4 L34 22 L52 28 L34 34 L28 52 L22 34 L4 28 L22 22 Z"
-          fill="var(--accent-2)"
-          opacity="0.9"
-        />
-      </svg>
-
-      {/* Star B — lower left */}
-      <svg
-        ref={starBRef}
-        className="hero-prop"
-        style={{ left: "20%", bottom: "22%", width: 38, height: 38, zIndex: 2 }}
-        viewBox="0 0 56 56"
-        fill="none"
-        aria-hidden
-      >
-        <path
-          d="M28 4 L34 22 L52 28 L34 34 L28 52 L22 34 L4 28 L22 22 Z"
-          fill="var(--accent-3)"
-        />
-      </svg>
 
       {/* Ring — mid right */}
       <svg

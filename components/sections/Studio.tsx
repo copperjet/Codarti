@@ -1,34 +1,10 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { gsap } from "@/lib/gsap";
 import { stats, clientNames } from "@/lib/content";
 import RevealOnScroll from "@/components/ui/RevealOnScroll";
-import Media from "@/components/ui/Media";
 import MarqueeRow from "@/components/ui/MarqueeRow";
 
 export default function Studio() {
-  const portraitRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = portraitRef.current;
-    if (!el) return;
-    const tween = gsap.to(el.querySelectorAll(".s-img"), {
-      yPercent: -12,
-      ease: "none",
-      scrollTrigger: {
-        trigger: el,
-        start: "top bottom",
-        end: "bottom top",
-        scrub: true,
-      },
-    });
-    return () => {
-      tween.scrollTrigger?.kill();
-      tween.kill();
-    };
-  }, []);
-
   return (
     <section id="studio" className="section-y">
       <div className="container-x">
@@ -37,11 +13,11 @@ export default function Studio() {
             <div className="eyebrow">(06) — Studio</div>
           </div>
 
-          <RevealOnScroll className="col-span-12 md:col-span-6">
-            <h2 className="font-serif text-[clamp(40px,5.5vw,80px)] leading-[0.98] mb-10 text-[var(--ink)]">
+          <RevealOnScroll className="col-span-12 md:col-span-9">
+            <h2 className="font-serif text-[clamp(40px,5.5vw,80px)] leading-[0.98] mb-10 text-[var(--ink)] max-w-3xl">
               A small team that ships what it promises.
             </h2>
-            <div className="space-y-6 text-[var(--ink-soft)] text-lg leading-relaxed max-w-xl">
+            <div className="space-y-6 text-[var(--ink-soft)] text-lg leading-relaxed max-w-2xl">
               <p>
                 Codarti was founded in Lusaka in 2019 by engineers tired of the
                 gap between what software studios pitched and what they
@@ -58,23 +34,6 @@ export default function Studio() {
               </p>
             </div>
           </RevealOnScroll>
-
-          <div ref={portraitRef} className="col-span-12 md:col-span-3 hidden md:block">
-            <div className="relative h-[420px]">
-              <Media
-                src="/studio/portrait-1.webp"
-                swatch="#1F2A3A"
-                alt="Codarti studio — portrait"
-                className="s-img absolute top-0 right-0 w-[80%] aspect-[3/4] rounded-sm"
-              />
-              <Media
-                src="/studio/portrait-2.webp"
-                swatch="#B8543A"
-                alt="Codarti studio — portrait"
-                className="s-img absolute bottom-0 left-0 w-[60%] aspect-[3/4] rounded-sm"
-              />
-            </div>
-          </div>
         </div>
 
         {/* Clients marquee */}

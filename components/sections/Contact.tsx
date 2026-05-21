@@ -26,21 +26,32 @@ export default function Contact() {
     reset,
   } = useForm<FormValues>({ resolver: zodResolver(schema) });
   const [sent, setSent] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
 
   const onSubmit = async (data: FormValues) => {
-    const subject = encodeURIComponent(`New enquiry — ${data.name}`);
-    const body = encodeURIComponent(
-      `Name: ${data.name}\nEmail: ${data.email}\nCompany: ${
-        data.company ?? "—"
-      }\nBudget: ${data.budget}\n\n${data.message}`
-    );
-    window.location.href = `mailto:support@codarti.com?subject=${subject}&body=${body}`;
-    setSent(true);
-    reset();
+    setServerError(null);
+    try {
+      const res = await fetch("/api/inquiry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      const json = await res.json().catch(() => ({ ok: false, error: "Network error" }));
+      if (!res.ok || !json.ok) {
+        throw new Error(typeof json.error === "string" ? json.error : "Send failed");
+      }
+      setSent(true);
+      reset();
+    } catch (e) {
+      setServerError(e instanceof Error ? e.message : "Send failed. Please email support@codarti.com directly.");
+    }
   };
 
-  // Reset sent state once the user touches the form again.
-  const resetSent = () => { if (sent) setSent(false); };
+  // Reset sent + error state once the user touches the form again.
+  const resetSent = () => {
+    if (sent) setSent(false);
+    if (serverError) setServerError(null);
+  };
 
   return (
     <section id="contact" className="section-y bg-[var(--ink)] text-[var(--bone)]">
@@ -115,19 +126,35 @@ export default function Contact() {
                   />
                 </Field>
 
-                <motion.button
-                  type="submit"
-                  disabled={isSubmitting}
-                  whileHover={{ y: -2 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="group inline-flex items-center gap-3 px-7 py-4 rounded-full bg-[var(--bone)] text-[var(--ink)] text-sm font-medium hover:bg-[var(--accent)] hover:text-[var(--bone)] transition-colors"
-                >
-                  {sent ? "Sent — check your client" : "Send enquiry"}
-                  <ArrowUpRight
-                    className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                    strokeWidth={1.5}
-                  />
-                </motion.button>
+                <div className="space-y-4">
+                  <motion.button
+                    type="submit"
+                    disabled={isSubmitting}
+                    whileHover={{ y: -2 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="group inline-flex items-center gap-3 px-7 py-4 rounded-full bg-[var(--bone)] text-[var(--ink)] text-sm font-medium hover:bg-[var(--accent)] hover:text-[var(--ink)] transition-colors disabled:opacity-60 disabled:cursor-wait"
+                  >
+                    {isSubmitting
+                      ? "Sending..."
+                      : sent
+                        ? "Sent — we'll be in touch"
+                        : "Send enquiry"}
+                    <ArrowUpRight
+                      className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                      strokeWidth={1.5}
+                    />
+                  </motion.button>
+                  {serverError && (
+                    <p className="text-sm text-[var(--accent)] max-w-md">
+                      {serverError}
+                    </p>
+                  )}
+                  {sent && !serverError && (
+                    <p className="text-sm text-[var(--bone)]/70 max-w-md">
+                      Thank you. We&apos;ll reply within one business day.
+                    </p>
+                  )}
+                </div>
               </form>
 
               <div className="col-span-12 lg:col-span-4 lg:col-start-9 space-y-10">
@@ -146,7 +173,7 @@ export default function Contact() {
                 <DetailRow
                   icon={<MapPin className="w-5 h-5" strokeWidth={1.25} />}
                   label="Studio"
-                  value={"Plot 190/10, Chawama,\nLusaka, Zambia"}
+                  value={"Lusaka, Zambia"}
                 />
 
                 <div className="rule-t pt-8 mt-8 border-[var(--bone)]/15">

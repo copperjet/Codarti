@@ -6,13 +6,16 @@ import { ArrowUpRight } from "lucide-react";
 import { pinScene } from "@/lib/scroll";
 import { prefersReducedMotion } from "@/lib/motion";
 import KineticBackdrop from "@/components/ui/KineticBackdrop";
+import ScreenshotStack from "@/components/ui/ScreenshotStack";
 import Media from "@/components/ui/Media";
 import { projects } from "@/lib/content";
 
-const CINEMA_PROJECTS = projects.slice(0, 3);
+const CINEMA_PROJECTS = projects; // all 5
 
-const tilts = [-6, 4, -3];
-const backdropVariants: Array<"lime" | "purple" | "pink"> = ["purple", "lime", "pink"];
+const tilts = [-6, 4, -3, 5, -4, 3];
+const backdropVariants: Array<"lime" | "purple" | "pink"> = [
+  "lime", "purple", "pink", "lime", "purple", "pink",
+];
 
 export default function WorkCinema() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -43,13 +46,14 @@ export default function WorkCinema() {
     return () => { st?.kill(); };
   }, [reduced]);
 
+  // ── Reduced-motion fallback ──────────────────────────────────────────────
   if (reduced) {
     return (
       <section className="section-y">
         <div className="container-x">
           {CINEMA_PROJECTS.map((p) => (
             <a
-              key={p.name}
+              key={p.slug}
               href={`https://${p.url}`}
               target="_blank"
               rel="noopener noreferrer"
@@ -66,21 +70,37 @@ export default function WorkCinema() {
 
   const p = CINEMA_PROJECTS[beat];
   const tilt = tilts[beat % tilts.length];
-  const next = CINEMA_PROJECTS[(beat + 1) % CINEMA_PROJECTS.length];
 
   return (
     <section
       ref={sectionRef}
       className="pin-scene min-h-[100svh] bg-[var(--bone)] overflow-hidden"
     >
-      {/* Kinetic backdrop — project name huge */}
-      <KineticBackdrop word={p.name} progress={progress} variant={backdropVariants[beat % backdropVariants.length]} />
+      {/* Kinetic backdrop */}
+      <KineticBackdrop
+        word={p.name}
+        progress={progress}
+        variant={backdropVariants[beat % backdropVariants.length]}
+      />
+
+      {/* Screenshot stack — full-section absolute flow layer (desktop only) */}
+      {p.screenshots && p.screenshots.length > 0 && (
+        <div className="absolute inset-0 hidden lg:block z-[5]">
+          <ScreenshotStack
+            screenshots={p.screenshots}
+            swatch={p.swatch}
+            alt={p.name}
+            projectKey={p.slug}
+            progress={progress}
+          />
+        </div>
+      )}
 
       {/* Left beat rail */}
-      <div className="absolute left-6 md:left-12 top-1/2 -translate-y-1/2 flex flex-col gap-5 z-20 hidden md:flex">
+      <div className="absolute left-6 md:left-12 top-1/2 -translate-y-1/2 flex flex-col gap-5 z-20">
         {CINEMA_PROJECTS.map((proj, i) => (
           <div
-            key={proj.name}
+            key={proj.slug}
             className="flex items-center gap-3 transition-all duration-500"
             style={{ opacity: i === beat ? 1 : 0.3 }}
           >
@@ -88,39 +108,76 @@ export default function WorkCinema() {
             <div
               className="h-px transition-all duration-500"
               style={{
-                background: i === beat ? "var(--accent-2)" : "var(--ink)",
-                width: i === beat ? 48 : 12,
+                background: i === beat ? "var(--accent-2)" : "var(--rule)",
+                width: i === beat ? 40 : 10,
               }}
             />
           </div>
         ))}
       </div>
 
-      {/* Next-card peek sliver — hints the upcoming project on the right edge */}
-      <div
-        className="absolute right-0 top-1/2 -translate-y-1/2 w-[10vw] max-w-[120px] aspect-[4/5] z-5 hidden md:block pointer-events-none"
-        aria-hidden
-      >
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={`peek-${next.name}`}
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 0.7, x: 0 }}
-            exit={{ opacity: 0, x: -10 }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="w-full h-full rounded-l-md overflow-hidden tilt-card"
-            style={{ transform: "rotate(-3deg) translateX(35%)" }}
-          >
-            <Media src={next.image} swatch={next.swatch} alt={next.name} />
-          </motion.div>
-        </AnimatePresence>
+      {/* ── Desktop layout: info left + stack right ──────────────────────── */}
+      <div className="absolute inset-0 hidden lg:flex items-center z-10 px-24 gap-16">
+
+        {/* LEFT: project info */}
+        <div className="flex-1 max-w-[420px]">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={p.slug + "-info"}
+              initial={{ opacity: 0, x: -24, y: 16 }}
+              animate={{ opacity: 1, x: 0, y: 0 }}
+              exit={{ opacity: 0, x: 24, y: -16 }}
+              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+              className="space-y-5"
+            >
+              <div className="eyebrow tnum text-[var(--ink-soft)]">
+                {p.index} / 0{CINEMA_PROJECTS.length}
+              </div>
+              <h3 className="font-serif text-[clamp(40px,4vw,72px)] leading-[0.95] text-[var(--ink)] tracking-[-0.02em]">
+                {p.name}
+              </h3>
+              <p className="text-[var(--ink-soft)] text-sm leading-relaxed max-w-[32ch]">
+                {p.description}
+              </p>
+              <p className="font-serif italic text-[var(--ink)] text-sm">
+                — {p.outcome}
+              </p>
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {p.tags.map((t) => (
+                  <span
+                    key={t}
+                    className="text-xs border border-[var(--rule)] px-2.5 py-1 rounded-full text-[var(--ink-soft)]"
+                  >
+                    {t}
+                  </span>
+                ))}
+              </div>
+              <a
+                href={`https://${p.url}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-cursor="view"
+                className="inline-flex items-center gap-2 text-sm text-[var(--ink)] group hover:text-[var(--accent-2)] transition-colors"
+              >
+                {p.url}
+                <ArrowUpRight
+                  className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
+                  strokeWidth={1.5}
+                />
+              </a>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* RIGHT: empty — ScreenshotStack flows full-width as sibling absolute layer */}
+        <div className="flex-1" aria-hidden />
       </div>
 
-      {/* Main tilted card frame — draggable to scrub beats */}
-      <div className="absolute inset-0 flex items-center justify-center z-10 px-6 md:px-32">
+      {/* ── Mobile layout: centered draggable card ───────────────────────── */}
+      <div className="absolute inset-0 flex items-center justify-center z-10 px-6 lg:hidden">
         <AnimatePresence mode="wait">
           <motion.div
-            key={p.name}
+            key={p.slug + "-mobile"}
             initial={{ opacity: 0, scale: 0.88, rotate: tilt - 6, y: 60 }}
             animate={{ opacity: 1, scale: 1, rotate: tilt, y: 0 }}
             exit={{ opacity: 0, scale: 0.92, rotate: tilt + 6, y: -50 }}
@@ -130,107 +187,44 @@ export default function WorkCinema() {
             dragElastic={0.25}
             onDragEnd={onDragEnd}
             data-cursor="drag"
-            className="tilt-card relative w-full max-w-md aspect-[4/5] overflow-hidden rounded-md cursor-grab active:cursor-grabbing"
-            style={{
-              background: `linear-gradient(135deg, ${p.swatch} 0%, ${p.swatch}dd 100%)`,
-            }}
+            className="tilt-card relative w-full max-w-[320px] aspect-[4/5] overflow-hidden rounded-md cursor-grab active:cursor-grabbing"
+            style={{ background: p.swatch }}
           >
-            {/* Cover image — falls back to swatch if asset missing */}
             <Media
-              src={p.image}
+              src={p.screenshots?.[2] ?? p.image}
               swatch={p.swatch}
               alt={p.name}
               className="absolute inset-0"
-              sizes="(max-width: 768px) 90vw, 480px"
+              sizes="90vw"
             />
-
-            {/* Decorative overlay geometry */}
-            <div className="absolute inset-0 pointer-events-none" aria-hidden>
-              <div
-                className="absolute -top-12 -right-12 w-56 h-56 rounded-full"
-                style={{ background: "var(--accent)", opacity: 0.2, filter: "blur(30px)" }}
-              />
-              <div
-                className="absolute -bottom-8 -left-8 w-40 h-40 rounded-full"
-                style={{ background: "var(--accent-3)", opacity: 0.25, filter: "blur(24px)" }}
-              />
-              <svg className="absolute top-6 right-6 w-10 h-10 opacity-70" viewBox="0 0 56 56" fill="none" aria-hidden>
-                <path d="M28 4 L34 22 L52 28 L34 34 L28 52 L22 34 L4 28 L22 22 Z" fill="var(--bone)" opacity="0.9" />
-              </svg>
-            </div>
-
-            {/* Dark scrim so title stays legible over imagery */}
+            {/* Dark scrim */}
             <div
               className="absolute inset-0 pointer-events-none"
               style={{ background: "linear-gradient(to top, rgba(15,14,20,0.55) 0%, transparent 55%)" }}
               aria-hidden
             />
-
-            {/* Title + visit pill */}
-            <div className="absolute inset-0 flex flex-col justify-between p-8">
-              <div className="flex items-start justify-between">
-                <span className="eyebrow tnum text-[var(--bone)]/80">{p.index}</span>
-                <a
-                  href={`https://${p.url}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  data-cursor="view"
-                  onPointerDown={(e) => e.stopPropagation()}
-                  className="inline-flex items-center gap-1.5 text-xs uppercase tracking-widest px-3 py-1.5 rounded-full bg-[var(--bone)]/15 text-[var(--bone)] hover:bg-[var(--bone)] hover:text-[var(--ink)] transition-colors backdrop-blur-sm border border-[var(--bone)]/20"
-                >
-                  Visit <ArrowUpRight className="w-3.5 h-3.5" strokeWidth={1.5} />
-                </a>
-              </div>
+            <div className="absolute inset-0 flex flex-col justify-between p-6">
+              <span className="eyebrow tnum text-[var(--bone)]/80">{p.index}</span>
               <div>
-                <h3 className="font-serif text-[clamp(40px,6vw,80px)] text-[var(--bone)] leading-[0.9] tracking-[-0.02em]">
+                <h3 className="font-serif text-[clamp(32px,8vw,56px)] text-[var(--bone)] leading-[0.9]">
                   {p.name}
                 </h3>
-                <p className="text-[var(--bone)]/85 text-sm mt-3 max-w-[26ch]">{p.outcome}</p>
+                <p className="text-[var(--bone)]/70 text-xs mt-2">{p.description}</p>
               </div>
             </div>
           </motion.div>
         </AnimatePresence>
       </div>
 
-      {/* Drag hint */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 text-xs uppercase tracking-widest text-[var(--ink-soft)] hidden md:block">
-        Drag ↔ to browse · {beat + 1} / {CINEMA_PROJECTS.length}
-      </div>
-
-      {/* Right meta panel */}
-      <div className="absolute right-8 md:right-16 top-1/2 -translate-y-1/2 z-20 max-w-xs hidden lg:block">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={p.name}
-            initial={{ opacity: 0, x: 32, y: 20 }}
-            animate={{ opacity: 1, x: 0, y: 0 }}
-            exit={{ opacity: 0, x: -32, y: -20 }}
-            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="space-y-4"
-          >
-            <div className="eyebrow tnum text-[var(--ink-soft)]">{p.index} / 03</div>
-            <h3 className="font-serif text-[clamp(28px,3vw,48px)] leading-[1] text-[var(--ink)]">
-              {p.name}
-            </h3>
-            <p className="text-[var(--ink-soft)] text-sm leading-relaxed">{p.description}</p>
-            <p className="font-serif italic text-[var(--ink)] text-sm">— {p.outcome}</p>
-            <div className="flex flex-wrap gap-1.5 pt-2">
-              {p.tags.map((t) => (
-                <span key={t} className="text-xs border border-[var(--rule)] px-2.5 py-1 rounded-full text-[var(--ink-soft)] bg-[var(--bone)]/60 backdrop-blur-sm">{t}</span>
-              ))}
-            </div>
-            <a
-              href={`https://${p.url}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm text-[var(--ink)] pt-2 group hover:text-[var(--accent-2)] transition-colors"
-              data-cursor="view"
-            >
-              Visit {p.url}
-              <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" strokeWidth={1.5} />
-            </a>
-          </motion.div>
-        </AnimatePresence>
+      {/* SR-only full content for accessibility */}
+      <div className="sr-only">
+        {CINEMA_PROJECTS.map((proj) => (
+          <div key={proj.slug}>
+            <h3>{proj.name}</h3>
+            <p>{proj.description}</p>
+            <p>{proj.outcome}</p>
+          </div>
+        ))}
       </div>
     </section>
   );
