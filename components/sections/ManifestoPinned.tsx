@@ -42,6 +42,9 @@ export default function ManifestoPinned() {
     return (
       <section id="studio-intro" className="section-y">
         <div className="container-x">
+          <h2 className="sr-only">
+            The Codarti manifesto — how we build software
+          </h2>
           <div className="col-span-12 md:col-start-4 md:col-span-9 max-w-4xl mx-auto">
             <span className="font-serif text-[var(--accent)] text-5xl block leading-none mb-4">&ldquo;</span>
             <div className="font-serif text-[clamp(28px,4.5vw,56px)] leading-[1.15]">
@@ -61,6 +64,7 @@ export default function ManifestoPinned() {
       id="studio-intro"
       className="pin-scene min-h-[100svh] bg-[var(--bone)] flex items-center"
     >
+      <h2 className="sr-only">The Codarti manifesto — how we build software</h2>
       <KineticBackdrop word={current.word} progress={progress} variant="purple" />
 
       <div className="container-x relative z-10 w-full">

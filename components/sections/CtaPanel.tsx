@@ -38,7 +38,12 @@ export default function CtaPanel() {
   };
 
   return (
-    <section className="relative overflow-hidden bg-[var(--ink)] py-32 md:py-48">
+    <section
+      id="start"
+      className="relative overflow-hidden bg-[var(--ink)] py-32 md:py-48"
+    >
+      <h2 className="sr-only">Start a software project with Codarti</h2>
+
       {/* Static dot-grid base */}
       <div className="dot-grid dark" aria-hidden />
 

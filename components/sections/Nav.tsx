@@ -1,15 +1,15 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X, ArrowUpRight } from "lucide-react";
 import Button from "@/components/ui/Button";
+import { NAV_LINKS } from "@/lib/seo";
 
-const links = [
-  { label: "Work", href: "#work" },
-  { label: "Studio", href: "#studio" },
-  { label: "Contact", href: "#contact" },
-];
+// Text links shown in the header — Contact is surfaced as the CTA instead.
+const links = NAV_LINKS.filter((l) => l.href !== "/contact");
 
 function LocalClock() {
   const [time, setTime] = useState<string>("");
@@ -38,7 +38,11 @@ function LocalClock() {
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const progressRef = useRef<HTMLDivElement>(null);
+
+  // Portal target only available after mount (SSR safety).
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     const onScroll = () => {
@@ -82,32 +86,32 @@ export default function Nav() {
         }`}
       >
         <div className="container-x flex items-center justify-between h-20">
-          <a
-            href="#"
-            aria-label="Codarti — back to top"
+          <Link
+            href="/"
+            aria-label="Codarti — home"
             className="font-serif text-2xl tracking-tight text-[var(--ink)]"
           >
             Codarti
             <span className="text-[var(--accent)]">.</span>
-          </a>
+          </Link>
 
           <LocalClock />
 
           <nav aria-label="Primary" className="hidden md:flex items-center gap-8">
             {links.map((l) => (
-              <a
+              <Link
                 key={l.href}
                 href={l.href}
                 className="text-sm text-[var(--ink-soft)] hover:text-[var(--ink)] transition-colors"
               >
                 {l.label}
-              </a>
+              </Link>
             ))}
           </nav>
 
           {/* Desktop CTA pill */}
           <div className="hidden md:block">
-            <Button href="#contact" variant="primary" withArrow>
+            <Button href="/contact" variant="primary" withArrow>
               Start a project
             </Button>
           </div>
@@ -125,11 +129,15 @@ export default function Nav() {
         </div>
       </header>
 
-      {/* Mobile drawer */}
-      <AnimatePresence>
-        {menuOpen && (
-          <motion.div
-            key="mobile-drawer"
+      {/* Mobile drawer — portaled to body so ScrollTrigger pin-spacers
+          (which reparent sibling DOM nodes) cannot break React's
+          insertBefore reference. */}
+      {mounted &&
+        createPortal(
+          <AnimatePresence>
+            {menuOpen && (
+              <motion.div
+                key="mobile-drawer"
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
@@ -171,7 +179,7 @@ export default function Nav() {
             </nav>
 
             <motion.a
-              href="#contact"
+              href="/contact"
               onClick={() => setMenuOpen(false)}
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
@@ -185,9 +193,11 @@ export default function Nav() {
             <p className="mt-8 text-xs text-[var(--bone)]/40 uppercase tracking-widest">
               Lusaka · support@codarti.com
             </p>
-          </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>,
+          document.body
         )}
-      </AnimatePresence>
     </>
   );
 }

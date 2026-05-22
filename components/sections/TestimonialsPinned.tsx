@@ -37,6 +37,9 @@ export default function TestimonialsPinned() {
     return (
       <section className="section-y bg-[var(--paper)]">
         <div className="container-x">
+          <h2 className="sr-only">
+            What our clients say about working with Codarti
+          </h2>
           <div className="eyebrow mb-12">(07) — In their words</div>
           {testimonials.map((t, i) => (
             <blockquote key={i} className="rule-b py-10">
@@ -75,6 +78,9 @@ export default function TestimonialsPinned() {
       ref={sectionRef}
       className="pin-scene min-h-[100svh] bg-[var(--paper)] overflow-hidden flex items-center"
     >
+      <h2 className="sr-only">
+        What our clients say about working with Codarti
+      </h2>
       <KineticBackdrop word={backdropWord} progress={progress} variant="pink" />
 
       {/* Flow carousel of quote polaroids */}

@@ -2,6 +2,14 @@ import type { Metadata, Viewport } from "next";
 import { Instrument_Serif, Geist } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
+import JsonLd from "@/components/seo/JsonLd";
+import {
+  SITE_URL,
+  DEFAULT_DESCRIPTION,
+  DEFAULT_KEYWORDS,
+  organizationSchema,
+  websiteSchema,
+} from "@/lib/seo";
 
 const instrument = Instrument_Serif({
   subsets: ["latin"],
@@ -18,52 +26,40 @@ const geist = Geist({
   display: "swap",
 });
 
-const siteUrl = "https://codarti.com";
-
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "Codarti — Software, made with intent.",
+    default: "Codarti — Software Development Company in Lusaka, Zambia",
     template: "%s · Codarti",
   },
-  description:
-    "Codarti is a software craft studio building considered digital products. Engineering, design, and strategy for teams who care about the details.",
-  keywords: [
-    "software studio",
-    "Lusaka",
-    "Zambia",
-    "engineering",
-    "product design",
-    "Next.js",
-    "React Native",
-    "TypeScript",
-  ],
+  description: DEFAULT_DESCRIPTION,
+  keywords: DEFAULT_KEYWORDS,
   applicationName: "Codarti",
-  authors: [{ name: "Codarti Software Studio", url: siteUrl }],
+  authors: [{ name: "Codarti Software Studio", url: SITE_URL }],
   creator: "Codarti",
   publisher: "Codarti",
+  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
-    url: siteUrl,
+    url: SITE_URL,
     siteName: "Codarti",
-    title: "Codarti — Software, made with intent.",
-    description:
-      "A software craft studio in Lusaka. Engineering, design, and strategy for teams who care about the details.",
+    title: "Codarti — Software Development Company in Lusaka, Zambia",
+    description: DEFAULT_DESCRIPTION,
+    locale: "en_ZM",
     images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Codarti" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Codarti — Software, made with intent.",
-    description:
-      "A software craft studio in Lusaka. Engineering, design, and strategy for teams who care about the details.",
+    title: "Codarti — Software Development Company in Lusaka, Zambia",
+    description: DEFAULT_DESCRIPTION,
     images: ["/opengraph-image"],
   },
-  robots: { index: true, follow: true },
-  icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg",
-    apple: "/favicon.svg",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large" },
   },
+  // Icons resolved automatically from app/icon.tsx and app/apple-icon.tsx.
 };
 
 export const viewport: Viewport = {
@@ -75,25 +71,6 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  name: "Codarti",
-  url: siteUrl,
-  logo: `${siteUrl}/favicon.svg`,
-  email: "support@codarti.com",
-  telephone: "+260 970 627 630",
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: "Plot 190/10, Chawama",
-    addressLocality: "Lusaka",
-    addressCountry: "ZM",
-  },
-  founder: "Codarti Software Studio",
-  description:
-    "A software craft studio in Lusaka. Engineering, design, and strategy for teams who care about the details.",
-};
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -102,10 +79,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${instrument.variable} ${geist.variable}`}>
       <body>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
+        <JsonLd data={[organizationSchema(), websiteSchema()]} />
         <Providers>{children}</Providers>
       </body>
     </html>

@@ -85,7 +85,6 @@ export default function ScreenshotStack({ screenshots, swatch, alt, progress }: 
                 className="object-cover"
                 draggable={false}
                 priority={i === 0}
-                quality={85}
               />
             </div>
           </motion.div>

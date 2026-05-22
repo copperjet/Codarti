@@ -39,7 +39,7 @@ export default function WorkTile({ project, className = "", tilt = 0, priority =
         <Media
           src={project.image}
           swatch={project.swatch}
-          alt={project.name}
+          alt={project.imageAlt ?? project.name}
           className="h-full w-full"
           priority={priority}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

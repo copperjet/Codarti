@@ -61,6 +61,9 @@ export default function WorkCinema() {
     return (
       <section className="section-y">
         <div className="container-x">
+          <h2 className="sr-only">
+            Selected work — software projects built by Codarti
+          </h2>
           {CINEMA_PROJECTS.map((p) => (
             <a
               key={p.slug}
@@ -86,6 +89,10 @@ export default function WorkCinema() {
       ref={sectionRef}
       className="pin-scene min-h-[100svh] bg-[var(--bone)] overflow-hidden"
     >
+      <h2 className="sr-only">
+        Selected work — software projects built by Codarti
+      </h2>
+
       {/* Kinetic backdrop */}
       <KineticBackdrop
         word={p.name}
@@ -99,7 +106,7 @@ export default function WorkCinema() {
           <ScreenshotStack
             screenshots={p.screenshots}
             swatch={p.swatch}
-            alt={p.name}
+            alt={p.imageAlt ?? p.name}
             projectKey={p.slug}
             progress={progress}
           />
@@ -203,8 +210,8 @@ export default function WorkCinema() {
             <Media
               src={p.screenshots?.[2] ?? p.image}
               swatch={p.swatch}
-              alt={p.name}
-              className="absolute inset-0"
+              alt={p.imageAlt ?? p.name}
+              className="h-full w-full"
               sizes="90vw"
             />
             {/* Dark scrim */}

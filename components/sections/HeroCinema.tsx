@@ -89,14 +89,17 @@ export default function HeroCinema() {
         <DotField density={16} accentRatio={0.08} className="opacity-90" />
         <div className="container-x relative z-10">
           <div className="eyebrow mb-10">A software craft studio · Est. Lusaka</div>
-          {BEATS.map((b, i) => (
-            <div key={i} className="mb-20">
-              <h2 className="font-serif text-[clamp(40px,11vw,96px)] leading-[0.95] whitespace-pre-line text-[var(--ink)]">
-                {b.headline}
-              </h2>
-              <p className="text-[var(--ink-soft)] text-base mt-6">{b.sub}</p>
-            </div>
-          ))}
+          {BEATS.map((b, i) => {
+            const Heading = i === 0 ? "h1" : "h2";
+            return (
+              <div key={i} className="mb-20">
+                <Heading className="font-serif text-[clamp(40px,11vw,96px)] leading-[0.95] whitespace-pre-line text-[var(--ink)]">
+                  {b.headline}
+                </Heading>
+                <p className="text-[var(--ink-soft)] text-base mt-6">{b.sub}</p>
+              </div>
+            );
+          })}
           <button
             type="button"
             onClick={() => setReelOpen(true)}
