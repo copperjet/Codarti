@@ -1,18 +1,16 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, PanInfo } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { pinScene } from "@/lib/scroll";
 import { prefersReducedMotion } from "@/lib/motion";
 import KineticBackdrop from "@/components/ui/KineticBackdrop";
 import ScreenshotStack from "@/components/ui/ScreenshotStack";
-import Media from "@/components/ui/Media";
 import { projects } from "@/lib/content";
 
 const CINEMA_PROJECTS = projects; // all 5
 
-const tilts = [-6, 4, -3, 5, -4, 3];
 const backdropVariants: Array<"lime" | "purple" | "pink"> = [
   "lime", "purple", "pink", "lime", "purple", "pink",
 ];
@@ -22,13 +20,6 @@ export default function WorkCinema() {
   const [beat, setBeat] = useState(0);
   const [progress, setProgress] = useState(0);
   const reduced = prefersReducedMotion();
-
-  const goNext = () => setBeat((b) => Math.min(CINEMA_PROJECTS.length - 1, b + 1));
-  const goPrev = () => setBeat((b) => Math.max(0, b - 1));
-  const onDragEnd = (_e: unknown, info: PanInfo) => {
-    if (info.offset.x < -80) goNext();
-    else if (info.offset.x > 80) goPrev();
-  };
 
   useEffect(() => {
     // Preload all project screenshots so no project transition shows a blank decode frame.
@@ -82,7 +73,6 @@ export default function WorkCinema() {
   }
 
   const p = CINEMA_PROJECTS[beat];
-  const tilt = tilts[beat % tilts.length];
 
   return (
     <section
@@ -100,9 +90,9 @@ export default function WorkCinema() {
         variant={backdropVariants[beat % backdropVariants.length]}
       />
 
-      {/* Screenshot stack — full-section absolute flow layer (desktop only) */}
+      {/* Screenshot stack — full-section absolute flow layer (all sizes) */}
       {p.screenshots && p.screenshots.length > 0 && (
-        <div className="absolute inset-0 hidden lg:block z-[5]">
+        <div className="absolute inset-0 z-[5]">
           <ScreenshotStack
             screenshots={p.screenshots}
             swatch={p.swatch}
@@ -190,45 +180,34 @@ export default function WorkCinema() {
         <div className="flex-1" aria-hidden />
       </div>
 
-      {/* ── Mobile layout: centered draggable card ───────────────────────── */}
-      <div className="absolute inset-0 flex items-center justify-center z-10 px-6 lg:hidden">
+      {/* ── Mobile layout: info panel — ScreenshotStack flows behind ─────── */}
+      <div className="absolute inset-x-0 bottom-0 z-10 px-6 pt-24 pb-14 lg:hidden bg-gradient-to-t from-[var(--bone)] via-[var(--bone)]/95 to-transparent">
         <AnimatePresence mode="wait">
           <motion.div
-            key={p.slug + "-mobile"}
-            initial={{ opacity: 0, scale: 0.88, rotate: tilt - 6, y: 60 }}
-            animate={{ opacity: 1, scale: 1, rotate: tilt, y: 0 }}
-            exit={{ opacity: 0, scale: 0.92, rotate: tilt + 6, y: -50 }}
-            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-            drag="x"
-            dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={0.25}
-            onDragEnd={onDragEnd}
-            data-cursor="drag"
-            className="tilt-card relative w-full max-w-[320px] aspect-[4/5] overflow-hidden rounded-md cursor-grab active:cursor-grabbing"
-            style={{ background: p.swatch }}
+            key={p.slug + "-mobile-info"}
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -24 }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           >
-            <Media
-              src={p.screenshots?.[2] ?? p.image}
-              swatch={p.swatch}
-              alt={p.imageAlt ?? p.name}
-              className="h-full w-full"
-              sizes="90vw"
-            />
-            {/* Dark scrim */}
-            <div
-              className="absolute inset-0 pointer-events-none"
-              style={{ background: "linear-gradient(to top, rgba(15,14,20,0.55) 0%, transparent 55%)" }}
-              aria-hidden
-            />
-            <div className="absolute inset-0 flex flex-col justify-between p-6">
-              <span className="eyebrow tnum text-[var(--bone)]/80">{p.index}</span>
-              <div>
-                <h3 className="font-serif text-[clamp(32px,8vw,56px)] text-[var(--bone)] leading-[0.9]">
-                  {p.name}
-                </h3>
-                <p className="text-[var(--bone)]/70 text-xs mt-2">{p.description}</p>
-              </div>
+            <div className="eyebrow tnum text-[var(--ink-soft)] mb-2">
+              {p.index} / 0{CINEMA_PROJECTS.length}
             </div>
+            <h3 className="font-serif text-[clamp(34px,10vw,56px)] leading-[0.95] text-[var(--ink)] tracking-[-0.02em]">
+              {p.name}
+            </h3>
+            <p className="text-[var(--ink-soft)] text-sm mt-2 max-w-[42ch]">
+              {p.description}
+            </p>
+            <a
+              href={`https://${p.url}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-sm text-[var(--ink)] mt-3"
+            >
+              {p.url}
+              <ArrowUpRight className="w-4 h-4" strokeWidth={1.5} />
+            </a>
           </motion.div>
         </AnimatePresence>
       </div>
