@@ -20,7 +20,8 @@ const sections = [
     list: [
       "Open Parlez on your device.",
       "Tap the Settings icon, then tap Account.",
-      "Tap Delete account and confirm.",
+      "Tap Privacy, then tap \"Delete all my data\".",
+      "Confirm by tapping Delete everything.",
     ],
   },
   {
